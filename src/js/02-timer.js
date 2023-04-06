@@ -8,6 +8,7 @@ const refs = {
   hoursValue: document.querySelector('span[data-hours]'),
   minutesValue: document.querySelector('span[data-minutes]'),
   secondsValue: document.querySelector('span[data-seconds]'),
+  yearsValue: document.querySelector('span[data-years]'),
 };
 
 const flat = flatpickr(refs.dataTimePicker, {
@@ -64,20 +65,29 @@ function convertMs(ms) {
   const minute = second * 60;
   const hour = minute * 60;
   const day = hour * 24;
+  const year = day * 356;
 
-  const days = Math.floor(ms / day); // Remaining days
-  const hours = Math.floor((ms % day) / hour); // Remaining hours
-  const minutes = Math.floor(((ms % day) % hour) / minute); // Remaining minutes
-  const seconds = Math.floor((((ms % day) % hour) % minute) / second); // Remaining seconds
+  const years = Math.floor(ms / year);
+  const days = Math.floor((ms % year) / day);
+  const hours = Math.floor((ms % day) / hour);
+  const minutes = Math.floor((ms % hour) / minute);
+  const seconds = Math.floor((ms % minute) / second);
 
-  return { days, hours, minutes, seconds };
+  // const years = Math.floor(ms / year);
+  // const days = Math.floor((ms % year) / (1000 * 60 * 60 * 24)); // Remaining days
+  // const hours = Math.floor((ms % day) / hour); // Remaining hours
+  // const minutes = Math.floor(((ms % day) % hour) / minute); // Remaining minutes
+  // const seconds = Math.floor((((ms % day) % hour) % minute) / second); // Remaining seconds
+
+  return { days, hours, minutes, seconds, years };
 }
 
-function timeInput({ days, hours, minutes, seconds }) {
+function timeInput({ days, hours, minutes, seconds, years }) {
   refs.daysValue.textContent = `${addLeadingZero(days)}`;
   refs.hoursValue.textContent = `${addLeadingZero(hours)}`;
   refs.minutesValue.textContent = `${addLeadingZero(minutes)}`;
   refs.secondsValue.textContent = `${addLeadingZero(seconds)}`;
+  refs.yearsValue.textContent = `${addLeadingZero(years)}`;
 }
 
 function addLeadingZero(numb) {
