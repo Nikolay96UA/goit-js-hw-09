@@ -1,5 +1,6 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import Notiflix from 'notiflix';
 
 const refs = {
   dataStart: document.querySelector('button[data-start]'),
@@ -37,14 +38,16 @@ function checkValue() {
   } else {
     refs.dataStart.disabled = false;
   }
+  error();
 }
 
 function timeOutput() {
   time = flat.selectedDates[0];
 
-  if (time <= new Date()) {
-    alert('Please choose a date in the future');
-    return;
+  error();
+
+  if (timeOutput) {
+    refs.dataTimePicker.disabled = true;
   }
 
   const timerId = setInterval(() => {
@@ -59,8 +62,14 @@ function timeOutput() {
   refs.dataStart.disabled = true;
 }
 
+function error() {
+  if (time <= new Date()) {
+    Notiflix.Notify.failure('Please choose a date in the future');
+    return;
+  }
+}
+
 function convertMs(ms) {
-  // Number of milliseconds per unit of time
   const second = 1000;
   const minute = second * 60;
   const hour = minute * 60;
@@ -72,12 +81,6 @@ function convertMs(ms) {
   const hours = Math.floor((ms % day) / hour);
   const minutes = Math.floor((ms % hour) / minute);
   const seconds = Math.floor((ms % minute) / second);
-
-  // const years = Math.floor(ms / year);
-  // const days = Math.floor((ms % year) / (1000 * 60 * 60 * 24)); // Remaining days
-  // const hours = Math.floor((ms % day) / hour); // Remaining hours
-  // const minutes = Math.floor(((ms % day) % hour) / minute); // Remaining minutes
-  // const seconds = Math.floor((((ms % day) % hour) % minute) / second); // Remaining seconds
 
   return { days, hours, minutes, seconds, years };
 }
@@ -102,6 +105,7 @@ function stopTimer(valueOutput, timerId) {
     valueOutput.seconds === 0
   ) {
     clearInterval(timerId);
-    alert('Tiiiime!)');
+    Notiflix.Notify.success('Tiiiime!)');
+    refs.dataTimePicker.disabled = false;
   }
 }
